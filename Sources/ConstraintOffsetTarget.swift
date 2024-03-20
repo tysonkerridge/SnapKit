@@ -1,4 +1,3 @@
-// swift-tools-version:5.8
 //
 //  SnapKit
 //
@@ -22,25 +21,49 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
+#if canImport(UIKit)
+    import UIKit
+#else
+    import AppKit
+#endif
 
-import PackageDescription
 
-let package = Package(
-    name: "SnapKit",
-    platforms: [
-        .iOS(.v12),
-        .macOS(.v10_13),
-        .tvOS(.v12)
-    ],
-    products: [
-        .library(name: "SnapKit", targets: ["SnapKit"]),
-        .library(name: "SnapKit-Dynamic", type: .dynamic, targets: ["SnapKit"]),
-    ],
-    targets: [
-        .target(name: "SnapKit", path: "Sources", resources: [.copy("PrivacyInfo.xcprivacy")]),
-        .testTarget(name: "SnapKitTests", dependencies: ["SnapKit"]),
-    ],
-    swiftLanguageVersions: [
-        .v5
-    ]
-)
+public protocol ConstraintOffsetTarget: ConstraintConstantTarget {
+}
+
+extension Int: ConstraintOffsetTarget {
+}
+
+extension UInt: ConstraintOffsetTarget {
+}
+
+extension Float: ConstraintOffsetTarget {
+}
+
+extension Double: ConstraintOffsetTarget {
+}
+
+extension CGFloat: ConstraintOffsetTarget {
+}
+
+extension ConstraintOffsetTarget {
+    
+    internal var constraintOffsetTargetValue: CGFloat {
+        let offset: CGFloat
+        if let amount = self as? Float {
+            offset = CGFloat(amount)
+        } else if let amount = self as? Double {
+            offset = CGFloat(amount)
+        } else if let amount = self as? CGFloat {
+            offset = CGFloat(amount)
+        } else if let amount = self as? Int {
+            offset = CGFloat(amount)
+        } else if let amount = self as? UInt {
+            offset = CGFloat(amount)
+        } else {
+            offset = 0.0
+        }
+        return offset
+    }
+    
+}

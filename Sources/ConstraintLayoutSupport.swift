@@ -1,4 +1,3 @@
-// swift-tools-version:5.8
 //
 //  SnapKit
 //
@@ -22,25 +21,16 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
+#if canImport(UIKit)
+    import UIKit
+#else
+    import AppKit
+#endif
 
-import PackageDescription
 
-let package = Package(
-    name: "SnapKit",
-    platforms: [
-        .iOS(.v12),
-        .macOS(.v10_13),
-        .tvOS(.v12)
-    ],
-    products: [
-        .library(name: "SnapKit", targets: ["SnapKit"]),
-        .library(name: "SnapKit-Dynamic", type: .dynamic, targets: ["SnapKit"]),
-    ],
-    targets: [
-        .target(name: "SnapKit", path: "Sources", resources: [.copy("PrivacyInfo.xcprivacy")]),
-        .testTarget(name: "SnapKitTests", dependencies: ["SnapKit"]),
-    ],
-    swiftLanguageVersions: [
-        .v5
-    ]
-)
+#if canImport(UIKit)
+    @available(iOS 8.0, *)
+    public typealias ConstraintLayoutSupport = UILayoutSupport
+#else
+    public class ConstraintLayoutSupport {}
+#endif

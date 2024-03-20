@@ -1,4 +1,3 @@
-// swift-tools-version:5.8
 //
 //  SnapKit
 //
@@ -22,25 +21,41 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
+#if canImport(UIKit)
+    import UIKit
+#else
+    import AppKit
+#endif
 
-import PackageDescription
 
-let package = Package(
-    name: "SnapKit",
-    platforms: [
-        .iOS(.v12),
-        .macOS(.v10_13),
-        .tvOS(.v12)
-    ],
-    products: [
-        .library(name: "SnapKit", targets: ["SnapKit"]),
-        .library(name: "SnapKit-Dynamic", type: .dynamic, targets: ["SnapKit"]),
-    ],
-    targets: [
-        .target(name: "SnapKit", path: "Sources", resources: [.copy("PrivacyInfo.xcprivacy")]),
-        .testTarget(name: "SnapKitTests", dependencies: ["SnapKit"]),
-    ],
-    swiftLanguageVersions: [
-        .v5
-    ]
-)
+public final class ConstraintItem {
+    
+    internal weak var target: AnyObject?
+    internal let attributes: ConstraintAttributes
+    
+    internal init(target: AnyObject?, attributes: ConstraintAttributes) {
+        self.target = target
+        self.attributes = attributes
+    }
+    
+    internal var layoutConstraintItem: LayoutConstraintItem? {
+        return self.target as? LayoutConstraintItem
+    }
+    
+}
+
+public func ==(lhs: ConstraintItem, rhs: ConstraintItem) -> Bool {
+    // pointer equality
+    guard lhs !== rhs else {
+        return true
+    }
+    
+    // must both have valid targets and identical attributes
+    guard let target1 = lhs.target,
+          let target2 = rhs.target,
+          target1 === target2 && lhs.attributes == rhs.attributes else {
+            return false
+    }
+    
+    return true
+}

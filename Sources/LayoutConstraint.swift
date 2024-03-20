@@ -1,4 +1,3 @@
-// swift-tools-version:5.8
 //
 //  SnapKit
 //
@@ -22,25 +21,41 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
+#if canImport(UIKit)
+    import UIKit
+#else
+    import AppKit
+#endif
 
-import PackageDescription
 
-let package = Package(
-    name: "SnapKit",
-    platforms: [
-        .iOS(.v12),
-        .macOS(.v10_13),
-        .tvOS(.v12)
-    ],
-    products: [
-        .library(name: "SnapKit", targets: ["SnapKit"]),
-        .library(name: "SnapKit-Dynamic", type: .dynamic, targets: ["SnapKit"]),
-    ],
-    targets: [
-        .target(name: "SnapKit", path: "Sources", resources: [.copy("PrivacyInfo.xcprivacy")]),
-        .testTarget(name: "SnapKitTests", dependencies: ["SnapKit"]),
-    ],
-    swiftLanguageVersions: [
-        .v5
-    ]
-)
+public class LayoutConstraint : NSLayoutConstraint {
+    
+    public var label: String? {
+        get {
+            return self.identifier
+        }
+        set {
+            self.identifier = newValue
+        }
+    }
+    
+    internal weak var constraint: Constraint? = nil
+    
+}
+
+internal func ==(lhs: LayoutConstraint, rhs: LayoutConstraint) -> Bool {
+    // If firstItem or secondItem on either constraint has a dangling pointer
+    // this comparison can cause a crash. The solution for this is to ensure
+    // your layout code hold strong references to things like Views, LayoutGuides
+    // and LayoutAnchors as SnapKit will not keep strong references to any of these.
+    guard lhs.firstAttribute == rhs.firstAttribute &&
+          lhs.secondAttribute == rhs.secondAttribute &&
+          lhs.relation == rhs.relation &&
+          lhs.priority == rhs.priority &&
+          lhs.multiplier == rhs.multiplier &&
+          lhs.secondItem === rhs.secondItem &&
+          lhs.firstItem === rhs.firstItem else {
+        return false
+    }
+    return true
+}

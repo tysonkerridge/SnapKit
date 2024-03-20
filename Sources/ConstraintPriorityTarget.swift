@@ -1,4 +1,3 @@
-// swift-tools-version:5.8
 //
 //  SnapKit
 //
@@ -22,25 +21,65 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
+#if canImport(UIKit)
+    import UIKit
+#else
+    import AppKit
+#endif
 
-import PackageDescription
 
-let package = Package(
-    name: "SnapKit",
-    platforms: [
-        .iOS(.v12),
-        .macOS(.v10_13),
-        .tvOS(.v12)
-    ],
-    products: [
-        .library(name: "SnapKit", targets: ["SnapKit"]),
-        .library(name: "SnapKit-Dynamic", type: .dynamic, targets: ["SnapKit"]),
-    ],
-    targets: [
-        .target(name: "SnapKit", path: "Sources", resources: [.copy("PrivacyInfo.xcprivacy")]),
-        .testTarget(name: "SnapKitTests", dependencies: ["SnapKit"]),
-    ],
-    swiftLanguageVersions: [
-        .v5
-    ]
-)
+public protocol ConstraintPriorityTarget {
+    
+    var constraintPriorityTargetValue: Float { get }
+    
+}
+
+extension Int: ConstraintPriorityTarget {
+    
+    public var constraintPriorityTargetValue: Float {
+        return Float(self)
+    }
+    
+}
+
+extension UInt: ConstraintPriorityTarget {
+    
+    public var constraintPriorityTargetValue: Float {
+        return Float(self)
+    }
+    
+}
+
+extension Float: ConstraintPriorityTarget {
+    
+    public var constraintPriorityTargetValue: Float {
+        return self
+    }
+    
+}
+
+extension Double: ConstraintPriorityTarget {
+    
+    public var constraintPriorityTargetValue: Float {
+        return Float(self)
+    }
+    
+}
+
+extension CGFloat: ConstraintPriorityTarget {
+    
+    public var constraintPriorityTargetValue: Float {
+        return Float(self)
+    }
+    
+}
+
+#if canImport(UIKit)
+extension UILayoutPriority: ConstraintPriorityTarget {
+
+    public var constraintPriorityTargetValue: Float {
+        return self.rawValue
+    }
+
+}
+#endif
